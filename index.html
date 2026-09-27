@@ -147,6 +147,18 @@
       font-size: 12px;
     }
 
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .card-tag-badge {
       background: #e2e8f0;
       color: #334155;
@@ -158,6 +170,17 @@
     .card-status-text {
       color: var(--text-sub);
       font-size: 11px;
+    }
+
+    .btn-edit-inline {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
     }
 
     /* タップ領域 */
@@ -296,12 +319,28 @@
       color: var(--text-sub);
     }
 
+    .manage-item-btns {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-edit {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--primary);
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
     .btn-del {
       background: none;
       border: none;
       color: var(--red);
-      font-size: 13px;
-      padding: 6px 10px;
+      font-size: 12px;
+      padding: 4px 8px;
       cursor: pointer;
     }
 
@@ -310,6 +349,73 @@
       color: var(--text-sub);
       margin: 40px 0;
       font-size: 14px;
+    }
+
+    /* 編集モーダルウィンドウ */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 480px;
+      border-radius: 16px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-cancel {
+      flex: 1;
+      padding: 10px;
+      background: #e2e8f0;
+      color: var(--text);
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-save {
+      flex: 1;
+      padding: 10px;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -370,6 +476,21 @@
     </div>
   </main>
 
+  <!-- 編集モーダル -->
+  <div id="edit-modal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-title">問題を編集</div>
+      <textarea id="edit-q" placeholder="問題文"></textarea>
+      <textarea id="edit-a" placeholder="解答"></textarea>
+      <input type="text" id="edit-tag" placeholder="タグ名">
+      <input type="hidden" id="edit-card-id">
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeEditModal()">キャンセル</button>
+        <button class="btn-save" onclick="saveCardEdit()">保存する</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const INTERVALS = {
       unknown: 30 * 60 * 1000,           // 30分
@@ -387,7 +508,7 @@
     };
 
     let cards = JSON.parse(localStorage.getItem('cards_app_data')) || [];
-    let cardFlipStates = {}; // カードごとの裏表管理
+    let cardFlipStates = {};
 
     function save() {
       localStorage.setItem('cards_app_data', JSON.stringify(cards));
@@ -447,6 +568,47 @@
       }
     }
 
+    /* 編集モーダルの操作 */
+    function openEditModal(id, event) {
+      if (event) event.stopPropagation(); // めくりイベントの誤爆を防止
+      const card = cards.find(c => c.id === id);
+      if (!card) return;
+
+      document.getElementById('edit-card-id').value = card.id;
+      document.getElementById('edit-q').value = card.q;
+      document.getElementById('edit-a').value = card.a;
+      document.getElementById('edit-tag').value = card.tag;
+
+      document.getElementById('edit-modal').classList.add('active');
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.remove('active');
+    }
+
+    function saveCardEdit() {
+      const id = document.getElementById('edit-card-id').value;
+      const q = document.getElementById('edit-q').value.trim();
+      const a = document.getElementById('edit-a').value.trim();
+      const tag = document.getElementById('edit-tag').value.trim() || '未分類';
+
+      if (!q || !a) {
+        alert('問題文と解答は必須です');
+        return;
+      }
+
+      const card = cards.find(c => c.id === id);
+      if (card) {
+        card.q = q;
+        card.a = a;
+        card.tag = tag;
+        save();
+        closeEditModal();
+        renderCards();
+        renderManageList();
+      }
+    }
+
     function updateTagDropdown() {
       const tagSelect = document.getElementById('filter-tag');
       const currentSelected = tagSelect.value;
@@ -480,7 +642,6 @@
         }
       });
 
-      // 並び替え処理
       if (sortOrder === 'due') {
         list.sort((a, b) => a.nextReview - b.nextReview);
       } else if (sortOrder === 'created_desc') {
@@ -514,14 +675,18 @@
         const cardEl = document.createElement('div');
         cardEl.className = 'stream-card';
 
-        // 復習タイミングの案内表示
         const isDue = c.nextReview <= Date.now();
         const dueText = isDue ? '【要復習】' : '';
 
         cardEl.innerHTML = `
           <div class="stream-card-header">
-            <span class="card-tag-badge">${escapeHtml(c.tag)}</span>
-            <span class="card-status-text">${dueText} 状態: ${STATUS_MAP[c.status] || c.status}</span>
+            <div class="header-left">
+              <span class="card-tag-badge">${escapeHtml(c.tag)}</span>
+              <span class="card-status-text">${dueText} 状態: ${STATUS_MAP[c.status] || c.status}</span>
+            </div>
+            <div class="header-right">
+              <button class="btn-edit-inline" onclick="openEditModal('${c.id}', event)">編集</button>
+            </div>
           </div>
           <div class="stream-card-body" onclick="toggleCardFlip('${c.id}')">
             <div class="body-type ${isFlipped ? 'type-a' : 'type-q'}">
@@ -585,7 +750,10 @@
             <div class="manage-title">${escapeHtml(c.q)}</div>
             <div class="manage-meta">[${escapeHtml(c.tag)}] 状態: ${STATUS_MAP[c.status] || c.status}</div>
           </div>
-          <button class="btn-del" onclick="deleteCard('${c.id}')">削除</button>
+          <div class="manage-item-btns">
+            <button class="btn-edit" onclick="openEditModal('${c.id}', event)">編集</button>
+            <button class="btn-del" onclick="deleteCard('${c.id}')">削除</button>
+          </div>
         `;
         container.appendChild(item);
       });
