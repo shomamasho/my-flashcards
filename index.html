@@ -8,12 +8,12 @@
   <title>暗記カード</title>
   <style>
     :root {
-      --bg: #f8fafc;
+      --bg: #f1f5f9;
       --card-bg: #ffffff;
       --text: #0f172a;
       --text-sub: #64748b;
       --primary: #2563eb;
-      --border: #e2e8f0;
+      --border: #cbd5e1;
       --red: #ef4444;
       --orange: #f97316;
       --blue: #3b82f6;
@@ -44,6 +44,7 @@
       display: flex;
       background: var(--card-bg);
       border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
     }
 
     nav button {
@@ -66,7 +67,7 @@
     main {
       flex: 1;
       overflow-y: auto;
-      padding: 16px;
+      padding: 12px;
       display: flex;
       flex-direction: column;
     }
@@ -81,114 +82,145 @@
       display: flex;
     }
 
-    /* フィルターエリア */
-    .filter-bar {
+    /* コントロールバー（絞り込み・ソート） */
+    .filter-panel {
+      background: var(--card-bg);
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .filter-row {
       display: flex;
       gap: 8px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
     }
 
     select {
       flex: 1;
-      min-width: 130px;
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 8px;
       border: 1px solid var(--border);
-      background: var(--card-bg);
-      font-size: 14px;
-      color: var(--text);
-    }
-
-    /* フラッシュカード */
-    .flashcard-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      perspective: 1000px;
-    }
-
-    .flashcard {
-      width: 100%;
-      height: 320px;
-      background: var(--card-bg);
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 24px;
-      text-align: center;
-      cursor: pointer;
-      position: relative;
-      user-select: none;
-      transition: transform 0.1s ease;
-    }
-
-    .flashcard:active {
-      transform: scale(0.98);
-    }
-
-    .flashcard-badge {
-      position: absolute;
-      top: 16px;
-      left: 16px;
-      font-size: 12px;
-      padding: 4px 8px;
       background: var(--bg);
-      border-radius: 6px;
-      color: var(--text-sub);
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 500;
     }
 
-    .flashcard-hint {
-      position: absolute;
-      bottom: 16px;
+    .list-summary {
       font-size: 12px;
       color: var(--text-sub);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 4px;
     }
 
-    .flashcard-content {
-      font-size: 20px;
+    /* 問題カード一覧 */
+    .card-stream {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 24px;
+    }
+
+    .stream-card {
+      background: var(--card-bg);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stream-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 12px;
+    }
+
+    .card-tag-badge {
+      background: #e2e8f0;
+      color: #334155;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .card-status-text {
+      color: var(--text-sub);
+      font-size: 11px;
+    }
+
+    /* タップ領域 */
+    .stream-card-body {
+      padding: 18px 14px;
+      cursor: pointer;
+      min-height: 90px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      user-select: none;
+      position: relative;
+    }
+
+    .body-type {
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .type-q { color: var(--primary); }
+    .type-a { color: var(--green); }
+
+    .body-text {
+      font-size: 16px;
       font-weight: 500;
       line-height: 1.5;
       white-space: pre-wrap;
     }
 
-    .flashcard-type {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 8px;
+    .tap-hint {
+      position: absolute;
+      right: 12px;
+      bottom: 8px;
+      font-size: 10px;
+      color: #94a3b8;
     }
 
-    /* 評価アクションボタン */
-    .action-grid {
+    /* 4段階評価ボタン */
+    .stream-card-actions {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-top: 16px;
+      gap: 6px;
+      padding: 8px 12px 12px;
+      border-top: 1px dashed #f1f5f9;
     }
 
     .btn-action {
-      padding: 12px 4px;
+      padding: 8px 2px;
       border: none;
-      border-radius: 10px;
-      font-size: 12px;
+      border-radius: 8px;
+      font-size: 11px;
       font-weight: bold;
       color: #fff;
       cursor: pointer;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 2px;
     }
 
     .btn-action span {
-      font-size: 10px;
+      font-size: 9px;
       font-weight: normal;
       opacity: 0.9;
     }
@@ -198,16 +230,17 @@
     .btn-good    { background: var(--blue); }
     .btn-perfect { background: var(--green); }
 
-    /* カード追加・一覧 */
+    /* 単語管理画面 */
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
       background: var(--card-bg);
-      padding: 16px;
+      padding: 14px;
       border-radius: 12px;
       border: 1px solid var(--border);
-      margin-bottom: 16px;
+      margin-bottom: 14px;
+      flex-shrink: 0;
     }
 
     textarea, input[type="text"] {
@@ -230,19 +263,19 @@
       color: #fff;
       border: none;
       border-radius: 8px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
     }
 
-    .card-list {
+    .manage-list {
       display: flex;
       flex-direction: column;
       gap: 8px;
-      overflow-y: auto;
+      padding-bottom: 20px;
     }
 
-    .card-item {
+    .manage-item {
       background: var(--card-bg);
       border: 1px solid var(--border);
       padding: 12px;
@@ -252,13 +285,13 @@
       align-items: center;
     }
 
-    .card-item-title {
+    .manage-title {
       font-weight: 500;
       font-size: 14px;
       margin-bottom: 4px;
     }
 
-    .card-item-meta {
+    .manage-meta {
       font-size: 12px;
       color: var(--text-sub);
     }
@@ -268,74 +301,59 @@
       border: none;
       color: var(--red);
       font-size: 13px;
-      padding: 4px 8px;
+      padding: 6px 10px;
       cursor: pointer;
     }
 
     .empty-state {
       text-align: center;
       color: var(--text-sub);
-      margin-top: 60px;
-      font-size: 15px;
+      margin: 40px 0;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
 
   <nav>
-    <button id="nav-review" class="active" onclick="switchTab('review')">復習</button>
+    <button id="nav-review" class="active" onclick="switchTab('review')">問題一覧・復習</button>
     <button id="nav-manage" onclick="switchTab('manage')">単語管理</button>
   </nav>
 
   <main>
-    <!-- 復習画面 -->
+    <!-- 一覧・復習画面 -->
     <div id="view-review" class="view active">
-      <div class="filter-bar">
-        <select id="filter-tag" onchange="renderReviewCard()">
-          <option value="all">すべてのタグ</option>
-        </select>
-        <select id="filter-status" onchange="renderReviewCard()">
-          <option value="due">期日の問題（通常）</option>
-          <option value="all">全ステータス（常に復習）</option>
-          <option value="unknown">「分からない」のみ</option>
-          <option value="hard">「難しい」のみ</option>
-          <option value="good">「分かった」のみ</option>
-          <option value="perfect">「完璧」のみ</option>
-        </select>
-      </div>
-
-      <div class="flashcard-container" id="study-area">
-        <!-- カード本体 -->
-        <div class="flashcard" id="card" onclick="flipCard()">
-          <div class="flashcard-badge" id="card-tag">タグ</div>
-          <div class="flashcard-type" id="card-type">問題</div>
-          <div class="flashcard-content" id="card-text">問題文がここに表示されます</div>
-          <div class="flashcard-hint">タップで裏返す</div>
+      <div class="filter-panel">
+        <div class="filter-row">
+          <select id="filter-tag" onchange="renderCards()">
+            <option value="all">すべてのタグ</option>
+          </select>
+          <select id="filter-status" onchange="renderCards()">
+            <option value="all">全問題を表示</option>
+            <option value="due">期日の問題（要復習）</option>
+            <option value="unknown">「分からない」のみ</option>
+            <option value="hard">「難しい」のみ</option>
+            <option value="good">「分かった」のみ</option>
+            <option value="perfect">「完璧」のみ</option>
+          </select>
         </div>
-
-        <!-- 4段階評価ボタン -->
-        <div class="action-grid" style="width: 100%;">
-          <button class="btn-action btn-unknown" onclick="gradeCard('unknown')">
-            分からない
-            <span>+30分</span>
-          </button>
-          <button class="btn-action btn-hard" onclick="gradeCard('hard')">
-            難しい
-            <span>+1日</span>
-          </button>
-          <button class="btn-action btn-good" onclick="gradeCard('good')">
-            分かった
-            <span>+3日</span>
-          </button>
-          <button class="btn-action btn-perfect" onclick="gradeCard('perfect')">
-            もう完璧
-            <span>+7日</span>
-          </button>
+        <div class="filter-row">
+          <select id="sort-order" onchange="renderCards()">
+            <option value="due">並び順: 復習期日順</option>
+            <option value="random">並び順: ランダム（シャッフル）</option>
+            <option value="created_desc">並び順: 作成順（新しい順）</option>
+            <option value="created_asc">並び順: 作成順（古い順）</option>
+          </select>
+        </div>
+        <div class="list-summary">
+          <span id="card-count">表示件数: 0件</span>
+          <span>タップで解答切替</span>
         </div>
       </div>
 
+      <div class="card-stream" id="card-stream"></div>
       <div id="no-cards" class="empty-state" style="display: none;">
-        復習するカードはありません！🎉
+        条件に合うカードはありません
       </div>
     </div>
 
@@ -344,11 +362,11 @@
       <div class="form-group">
         <textarea id="inp-q" placeholder="問題文を入力"></textarea>
         <textarea id="inp-a" placeholder="解答を入力"></textarea>
-        <input type="text" id="inp-tag" placeholder="タグ名（例: 基本情報, 英単語）">
+        <input type="text" id="inp-tag" placeholder="タグ名（例: 基本情報, ネットワーク）">
         <button class="btn-primary" onclick="addCard()">問題を追加</button>
       </div>
 
-      <div class="card-list" id="card-list"></div>
+      <div class="manage-list" id="manage-list"></div>
     </div>
   </main>
 
@@ -360,14 +378,20 @@
       perfect: 7 * 24 * 60 * 60 * 1000   // 7日
     };
 
+    const STATUS_MAP = {
+      new: '未学習',
+      unknown: '分からない',
+      hard: '難しい',
+      good: '分かった',
+      perfect: '完璧'
+    };
+
     let cards = JSON.parse(localStorage.getItem('cards_app_data')) || [];
-    let currentCard = null;
-    let isFlipped = false;
+    let cardFlipStates = {}; // カードごとの裏表管理
 
     function save() {
       localStorage.setItem('cards_app_data', JSON.stringify(cards));
       updateTagDropdown();
-      renderManageList();
     }
 
     function switchTab(tab) {
@@ -377,7 +401,7 @@
       if (tab === 'review') {
         document.getElementById('nav-review').classList.add('active');
         document.getElementById('view-review').classList.add('active');
-        renderReviewCard();
+        renderCards();
       } else {
         document.getElementById('nav-manage').classList.add('active');
         document.getElementById('view-manage').classList.add('active');
@@ -401,7 +425,8 @@
         a: a,
         tag: tag,
         status: 'new',
-        nextReview: Date.now() // 作成後すぐ復習可能
+        createdAt: Date.now(),
+        nextReview: Date.now()
       };
 
       cards.push(newCard);
@@ -409,14 +434,16 @@
 
       document.getElementById('inp-q').value = '';
       document.getElementById('inp-a').value = '';
-      alert('カードを保存しました');
+      alert('問題を追加しました');
+      renderManageList();
     }
 
     function deleteCard(id) {
       if (confirm('このカードを削除しますか？')) {
         cards = cards.filter(c => c.id !== id);
         save();
-        renderReviewCard();
+        renderManageList();
+        renderCards();
       }
     }
 
@@ -435,82 +462,114 @@
       tagSelect.value = currentSelected;
     }
 
-    function getFilteredCards() {
+    function getFilteredAndSortedCards() {
       const tagFilter = document.getElementById('filter-tag').value;
       const statusFilter = document.getElementById('filter-status').value;
+      const sortOrder = document.getElementById('sort-order').value;
       const now = Date.now();
 
-      return cards.filter(c => {
+      let list = cards.filter(c => {
         if (tagFilter !== 'all' && c.tag !== tagFilter) return false;
 
         if (statusFilter === 'due') {
           return c.nextReview <= now;
         } else if (statusFilter === 'all') {
-          return true; // 常に全件復習
+          return true;
         } else {
-          return c.status === statusFilter; // 指定理解度のみ
+          return c.status === statusFilter;
         }
+      });
+
+      // 並び替え処理
+      if (sortOrder === 'due') {
+        list.sort((a, b) => a.nextReview - b.nextReview);
+      } else if (sortOrder === 'created_desc') {
+        list.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      } else if (sortOrder === 'created_asc') {
+        list.sort((a, b) => (a.createdAt || 0) - (b.createdAt || 0));
+      } else if (sortOrder === 'random') {
+        list.sort(() => Math.random() - 0.5);
+      }
+
+      return list;
+    }
+
+    function renderCards() {
+      const stream = document.getElementById('card-stream');
+      const emptyState = document.getElementById('no-cards');
+      const countEl = document.getElementById('card-count');
+      const list = getFilteredAndSortedCards();
+
+      countEl.textContent = `表示件数: ${list.length}件`;
+      stream.innerHTML = '';
+
+      if (list.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+      emptyState.style.display = 'none';
+
+      list.forEach(c => {
+        const isFlipped = !!cardFlipStates[c.id];
+        const cardEl = document.createElement('div');
+        cardEl.className = 'stream-card';
+
+        // 復習タイミングの案内表示
+        const isDue = c.nextReview <= Date.now();
+        const dueText = isDue ? '【要復習】' : '';
+
+        cardEl.innerHTML = `
+          <div class="stream-card-header">
+            <span class="card-tag-badge">${escapeHtml(c.tag)}</span>
+            <span class="card-status-text">${dueText} 状態: ${STATUS_MAP[c.status] || c.status}</span>
+          </div>
+          <div class="stream-card-body" onclick="toggleCardFlip('${c.id}')">
+            <div class="body-type ${isFlipped ? 'type-a' : 'type-q'}">
+              ${isFlipped ? '● 解答' : '● 問題'}
+            </div>
+            <div class="body-text">${escapeHtml(isFlipped ? c.a : c.q)}</div>
+            <div class="tap-hint">${isFlipped ? 'タップで問題へ' : 'タップで解答へ'}</div>
+          </div>
+          <div class="stream-card-actions">
+            <button class="btn-action btn-unknown" onclick="gradeCard('${c.id}', 'unknown')">
+              分からない
+              <span>+30分</span>
+            </button>
+            <button class="btn-action btn-hard" onclick="gradeCard('${c.id}', 'hard')">
+              難しい
+              <span>+1日</span>
+            </button>
+            <button class="btn-action btn-good" onclick="gradeCard('${c.id}', 'good')">
+              分かった
+              <span>+3日</span>
+            </button>
+            <button class="btn-action btn-perfect" onclick="gradeCard('${c.id}', 'perfect')">
+              もう完璧
+              <span>+7日</span>
+            </button>
+          </div>
+        `;
+        stream.appendChild(cardEl);
       });
     }
 
-    function renderReviewCard() {
-      const list = getFilteredCards();
-      const studyArea = document.getElementById('study-area');
-      const emptyState = document.getElementById('no-cards');
-
-      if (list.length === 0) {
-        studyArea.style.display = 'none';
-        emptyState.style.display = 'block';
-        currentCard = null;
-        return;
-      }
-
-      studyArea.style.display = 'flex';
-      emptyState.style.display = 'none';
-
-      // 復習優先順（期日が近い順）
-      list.sort((a, b) => a.nextReview - b.nextReview);
-      currentCard = list[0];
-      isFlipped = false;
-      displayCardContent();
+    function toggleCardFlip(id) {
+      cardFlipStates[id] = !cardFlipStates[id];
+      renderCards();
     }
 
-    function flipCard() {
-      if (!currentCard) return;
-      isFlipped = !isFlipped;
-      displayCardContent();
-    }
+    function gradeCard(id, grade) {
+      const card = cards.find(c => c.id === id);
+      if (!card) return;
 
-    function displayCardContent() {
-      if (!currentCard) return;
-      const tagEl = document.getElementById('card-tag');
-      const typeEl = document.getElementById('card-type');
-      const textEl = document.getElementById('card-text');
-
-      tagEl.textContent = currentCard.tag;
-
-      if (!isFlipped) {
-        typeEl.textContent = '問題';
-        typeEl.style.color = 'var(--primary)';
-        textEl.textContent = currentCard.q;
-      } else {
-        typeEl.textContent = '解答';
-        typeEl.style.color = 'var(--green)';
-        textEl.textContent = currentCard.a;
-      }
-    }
-
-    function gradeCard(grade) {
-      if (!currentCard) return;
-
-      currentCard.status = grade;
-      currentCard.nextReview = Date.now() + INTERVALS[grade];
+      card.status = grade;
+      card.nextReview = Date.now() + INTERVALS[grade];
       save();
-      renderReviewCard();
+      renderCards();
     }
 
     function renderManageList() {
-      const container = document.getElementById('card-list');
+      const container = document.getElementById('manage-list');
       container.innerHTML = '';
 
       if (cards.length === 0) {
@@ -520,22 +579,11 @@
 
       cards.slice().reverse().forEach(c => {
         const item = document.createElement('div');
-        item.className = 'card-item';
-        
-        const statusMap = {
-          new: '未学習',
-          unknown: '分からない',
-          hard: '難しい',
-          good: '分かった',
-          perfect: '完璧'
-        };
-
+        item.className = 'manage-item';
         item.innerHTML = `
           <div>
-            <div class="card-item-title">${escapeHtml(c.q)}</div>
-            <div class="card-item-meta">
-              [${escapeHtml(c.tag)}] 状態: ${statusMap[c.status] || c.status}
-            </div>
+            <div class="manage-title">${escapeHtml(c.q)}</div>
+            <div class="manage-meta">[${escapeHtml(c.tag)}] 状態: ${STATUS_MAP[c.status] || c.status}</div>
           </div>
           <button class="btn-del" onclick="deleteCard('${c.id}')">削除</button>
         `;
@@ -544,14 +592,14 @@
     }
 
     function escapeHtml(str) {
-      return str.replace(/[&<>'"]/g, 
+      return String(str).replace(/[&<>'"]/g, 
         tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
       );
     }
 
-    // 初期化
+    // 初期化実行
     updateTagDropdown();
-    renderReviewCard();
+    renderCards();
   </script>
 </body>
 </html>
